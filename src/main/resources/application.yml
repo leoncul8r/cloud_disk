@@ -1,0 +1,31 @@
+
+port: 8080
+connection-timeout:
+max-http-header-size: 8024
+servlet:
+  session:
+    cookie:
+      max-age: 1800
+      http-only:
+    timeout: 1800
+
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/cloudDisk
+    username: root
+    password: leonleon
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 100MB # 单个文件大小
+      max-request-size: 500MB # 设置总上传的数据大小
+      enabled: true
