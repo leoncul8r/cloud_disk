@@ -35,6 +35,7 @@ public class FolderController
         Folder folder = folderService.getFolderById (folderId);
         Result res = new Result ();
         res.setData (folder);
+        res.setMessageAndCode ("新建文件夹成功", 1);
 
         return res;
     }
@@ -47,8 +48,7 @@ public class FolderController
         List<Folder> folders = folderService.getFoldersByParent (parentFolderId);
         Result res = new Result ();
         res.setData (folders);
-        res.setMessage ("获取该父文件夹下的文件夹列表成功");
-        res.setCode (1);
+        res.setMessageAndCode ("获取该父文件夹下的文件夹列表成功", 1);
 
         return res;
     }

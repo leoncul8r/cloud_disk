@@ -6,6 +6,12 @@ public class Result
     private String message;
     private Object data;
 
+    public void setMessageAndCode (String message, Integer code)
+    {
+        this.message = message;
+        this.code = code;
+    }
+
     public Integer getCode ()
     {
         return code;

@@ -69,13 +69,15 @@ public class FileController
 
     @PostMapping ("/multiUpload")
     @ResponseBody
-    public String multiUpload(HttpServletRequest request) {
+    public Result multiUpload(HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        String filePath = "/Library/Storage/2020/";
+        String filePath = "/Library/Storage/2020/";     //文件存储在服务器的本地路径
+        Result res = new Result ();
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
             if (file.isEmpty()) {
-                return "上传第" + (i++) + "个文件失败";
+                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
+                return res;
             }
             String fileName = file.getOriginalFilename();
 
@@ -85,12 +87,12 @@ public class FileController
                 log.info("第" + (i + 1) + "个文件上传成功");
             } catch (IOException e) {
                 log.error(e.toString(), e);
-                return "上传第" + (i++) + "个文件失败";
+                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
+                return res;
             }
         }
-
-        return "上传成功";
-
+        res.setMessageAndCode ("上传成功", 1);
+        return res;
     }
 
     //TODO Download file
@@ -103,8 +105,7 @@ public class FileController
         List<FileInfo> fileInfos = fileService.getFileInfos (parentFolderId);
         Result res = new Result ();
         res.setData (fileInfos);
-        res.setMessage ("获取该父文件夹下的文件列表成功");
-        res.setCode (1);
+        res.setMessageAndCode ("获取该父文件夹下的文件列表成功", 1);
 
         return res;
     }
@@ -114,8 +115,7 @@ public class FileController
     public Result test()
     {
         Result res = new Result ();
-        res.setMessage ("test successfully");
-        res.setCode (1);
+        res.setMessageAndCode ("test successfully", 1);
         return res;
     }
 
