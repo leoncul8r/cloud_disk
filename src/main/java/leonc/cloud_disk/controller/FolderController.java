@@ -47,6 +47,8 @@ public class FolderController
         List<Folder> folders = folderService.getFoldersByParent (parentFolderId);
         Result res = new Result ();
         res.setData (folders);
+        res.setMessage ("获取该父文件夹下的文件夹列表成功");
+        res.setCode (1);
 
         return res;
     }

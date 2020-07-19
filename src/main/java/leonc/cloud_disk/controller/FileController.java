@@ -103,6 +103,8 @@ public class FileController
         List<FileInfo> fileInfos = fileService.getFileInfos (parentFolderId);
         Result res = new Result ();
         res.setData (fileInfos);
+        res.setMessage ("获取该父文件夹下的文件列表成功");
+        res.setCode (1);
 
         return res;
     }
@@ -113,6 +115,7 @@ public class FileController
     {
         Result res = new Result ();
         res.setMessage ("test successfully");
+        res.setCode (1);
         return res;
     }
 
