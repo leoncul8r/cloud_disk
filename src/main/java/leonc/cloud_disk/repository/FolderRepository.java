@@ -8,5 +8,5 @@ import java.util.List;
 public interface FolderRepository extends JpaRepository<Folder, Integer>
 {
     Folder findByFolderId (Integer folderId);
-    List<Folder> findByParentFolderId (String parentFolderId);
+    List<Folder> findByParentFolderId (Integer parentFolderId);
 }

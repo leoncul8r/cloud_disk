@@ -30,14 +30,14 @@ public class FileService
         fileRepository.save (fileInfo);
     }
 
-    public List<FileInfo> getFileInfos (String folderId)
+    public List<FileInfo> getFileInfos (Integer parentFolderId)
     {
-        return this.fileRepository.findByFolderId (folderId);
+        return this.fileRepository.findByFolderId (parentFolderId);
     }
 
 
     //写入文件基本数据
-    public Integer save(String folderId, String fileName, String userId) throws  IOException
+    public Integer save(Integer folderId, String fileName, Integer userId) throws  IOException
     {
         FileInfo fileInfo = new FileInfo ();
         fileInfo.setFolderId (folderId);

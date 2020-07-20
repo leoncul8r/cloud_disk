@@ -13,11 +13,12 @@ public class FolderService
     @Autowired
     private FolderRepository folderRepository;
 
-    public Integer createFolder (String folderName, String parentFolderId)
+    public Integer createFolder (String folderName, Integer parentFolderId, Integer userId)
     {
         Folder folder = new Folder ();
         folder.setFolderName (folderName);
         folder.setParentFolderId (parentFolderId);
+        folder.setUserId (userId);
 
         this.folderRepository.save (folder);
 
@@ -29,7 +30,7 @@ public class FolderService
         return this.folderRepository.findByFolderId (folderId);
     }
 
-    public List<Folder> getFoldersByParent (String parentFolderId)
+    public List<Folder> getFoldersByParent (Integer parentFolderId)
     {
         return this.folderRepository.findByParentFolderId (parentFolderId);
     }

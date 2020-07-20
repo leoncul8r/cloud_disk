@@ -1,17 +1,14 @@
 package leonc.cloud_disk.controller;
 
+import io.swagger.annotations.ApiOperation;
 import leonc.cloud_disk.entity.Folder;
 import leonc.cloud_disk.service.FolderService;
 import leonc.cloud_disk.utils.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -25,12 +22,13 @@ public class FolderController
 
     @PostMapping ("/create")
     @ResponseBody
-    public Result create (HttpServletRequest request)
+    @ApiOperation (notes = "返回值补充说明：Data内容为该文件夹信息", value = "创建文件夹")
+    public Result create (@RequestParam ("folderName") String folderName,
+                          @RequestParam ("parentFolderId") Integer parentFolderId,
+                          @RequestParam ("userId") Integer userId)
     {
-        String folderName= request.getParameter("folderName");
-        String parentFolderId= request.getParameter("parentFolderId");
         Integer folderId;
-        folderId = folderService.createFolder (folderName, parentFolderId);
+        folderId = folderService.createFolder (folderName, parentFolderId, userId);
 
         Folder folder = folderService.getFolderById (folderId);
         Result res = new Result ();
@@ -40,11 +38,11 @@ public class FolderController
         return res;
     }
 
-    @PostMapping ("/getFolders")
+    @GetMapping ("/getList")
     @ResponseBody
-    public Result getFolders (HttpServletRequest request)
+    @ApiOperation (notes = "返回值补充说明：Data内容为若干个文件夹信息（List<Folder>）", value = "获取文件夹内的文件夹")
+    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId)
     {
-        String parentFolderId= request.getParameter("parentFolderId");
         List<Folder> folders = folderService.getFoldersByParent (parentFolderId);
         Result res = new Result ();
         res.setData (folders);
@@ -52,5 +50,7 @@ public class FolderController
 
         return res;
     }
+
+    //TODO delete
 
 }

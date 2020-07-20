@@ -1,5 +1,6 @@
 package leonc.cloud_disk.controller;
 
+import io.swagger.annotations.ApiOperation;
 import leonc.cloud_disk.entity.FileInfo;
 import leonc.cloud_disk.service.FileService;
 import leonc.cloud_disk.utils.RenameFile;
@@ -10,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -29,79 +28,51 @@ public class FileController
     @Autowired
     private FileService fileService;
 
-    @GetMapping ("/upload")
-    public String upload() {
-        return "upload";
-    }
-
     @PostMapping ("/upload")
     @ResponseBody
-    public String upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    @ApiOperation (notes = "返回值补充说明：Data内容为新建的文件夹的信息", value = "上传文件")
+    public Result upload(@RequestParam("file") MultipartFile file,
+                         @RequestParam ("userId") Integer userId,
+                         @RequestParam ("folderId") Integer folderId)
+    {
+        Result res = new Result ();
         if (file.isEmpty()) {
-            return "上传失败，请选择文件";
+            res.setMessageAndCode ("上传失败，请选择文件", 0);
+            return res;
         }
-
         String fileName = file.getOriginalFilename();
         String filePath = "/Library/Storage/2020/";
-
-        String folderId = request.getParameter("folderId");
-        log.info("From request: folderId" + folderId + "; File name: " + fileName);
 
         File dest = new File(filePath + fileName);
         try {
             file.transferTo(dest);
             Integer fileId;
-            fileId = fileService.save(folderId, fileName, "0");
+            fileId = fileService.save(folderId, fileName, userId);
             RenameFile.rename (filePath + fileName, filePath + fileId);
             log.info("上传成功");
-            return "上传成功";
+            res.setData (file);
+            res.setMessageAndCode ("上传成功", 1);
+            return res;
         } catch (IOException e) {
             log.error(e.toString(), e);
         }
-        return "上传失败！";
-    }
-
-
-    @GetMapping ("/multiUpload")
-    public String multiUpload() {
-        return "multiUpload";
-    }
-
-    @PostMapping ("/multiUpload")
-    @ResponseBody
-    public Result multiUpload(HttpServletRequest request) {
-        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        String filePath = "/Library/Storage/2020/";     //文件存储在服务器的本地路径
-        Result res = new Result ();
-        for (int i = 0; i < files.size(); i++) {
-            MultipartFile file = files.get(i);
-            if (file.isEmpty()) {
-                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
-                return res;
-            }
-            String fileName = file.getOriginalFilename();
-
-            File dest = new File(filePath + fileName);
-            try {
-                file.transferTo(dest);
-                log.info("第" + (i + 1) + "个文件上传成功");
-            } catch (IOException e) {
-                log.error(e.toString(), e);
-                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
-                return res;
-            }
-        }
-        res.setMessageAndCode ("上传成功", 1);
+        res.setMessageAndCode ("上传失败", 0);
         return res;
     }
 
+
+//
+
     //TODO Download file
 
-    @PostMapping ("/getFiles")
+    //TODO delete
+
+
+    @GetMapping ("/getList")
     @ResponseBody
-    public Result getFiles (HttpServletRequest request)
+    @ApiOperation (notes = "返回值补充说明：Data内容为若干个文件的信息（List<Folder>）", value = "获取文件夹内的文件")
+    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId)
     {
-        String parentFolderId= request.getParameter("parentFolderId");
         List<FileInfo> fileInfos = fileService.getFileInfos (parentFolderId);
         Result res = new Result ();
         res.setData (fileInfos);
@@ -110,15 +81,48 @@ public class FileController
         return res;
     }
 
-    @ResponseBody
-    @RequestMapping ("/test")
-    public Result test()
-    {
-        Result res = new Result ();
-        res.setMessageAndCode ("test successfully", 1);
-        return res;
-    }
+
+    //    @GetMapping ("/multiUpload")
+    //    public String multiUpload() {
+    //        return "multiUpload";
+    //    }
+    //
+    //    @PostMapping ("/multiUpload")
+    //    @ResponseBody
+    //    public Result multiUpload(HttpServletRequest request) {
+    //        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+    //        String filePath = "/Library/Storage/2020/";     //文件存储在服务器的本地路径
+    //        Result res = new Result ();
+    //        for (int i = 0; i < files.size(); i++) {
+    //            MultipartFile file = files.get(i);
+    //            if (file.isEmpty()) {
+    //                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
+    //                return res;
+    //            }
+    //            String fileName = file.getOriginalFilename();
+    //
+    //            File dest = new File(filePath + fileName);
+    //            try {
+    //                file.transferTo(dest);
+    //                log.info("第" + (i + 1) + "个文件上传成功");
+    //            } catch (IOException e) {
+    //                log.error(e.toString(), e);
+    //                res.setMessageAndCode ("上传第" + (i++) + "个文件失败", 0);
+    //                return res;
+    //            }
+    //        }
+    //        res.setMessageAndCode ("上传成功", 1);
+    //        return res;
+    //    }
 
 
+//    @ResponseBody
+//    @RequestMapping ("/test")
+//    public Result test()
+//    {
+//        Result res = new Result ();
+//        res.setMessageAndCode ("test successfully", 1);
+//        return res;
+//    }
 
 }

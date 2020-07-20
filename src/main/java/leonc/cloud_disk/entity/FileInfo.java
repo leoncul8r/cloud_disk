@@ -2,16 +2,17 @@ package leonc.cloud_disk.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class FileInfo
 {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer fileId;
-    private String userId;
-    private String folderId;
+    private Integer userId;
+    private Integer folderId;
     private String fileName;
     private double fileSize;
 
@@ -26,22 +27,22 @@ public class FileInfo
         this.fileId = fileId;
     }
 
-    public String getUserId ()
+    public Integer getUserId ()
     {
         return userId;
     }
 
-    public void setUserId (String userId)
+    public void setUserId (Integer userId)
     {
         this.userId = userId;
     }
 
-    public String getFolderId ()
+    public Integer getFolderId ()
     {
         return folderId;
     }
 
-    public void setFolderId (String folderId)
+    public void setFolderId (Integer folderId)
     {
         this.folderId = folderId;
     }
