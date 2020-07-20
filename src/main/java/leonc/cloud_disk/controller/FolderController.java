@@ -40,10 +40,11 @@ public class FolderController
 
     @GetMapping ("/getList")
     @ResponseBody
-    @ApiOperation (notes = "返回值补充说明：Data内容为若干个文件夹信息（List<Folder>）", value = "获取文件夹内的文件夹")
-    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId)
+    @ApiOperation (notes = "最外层文件夹parentFolderId = 0。\n返回值补充说明：Data内容为若干个文件夹信息（List<Folder>）", value = "获取文件夹内的文件夹")
+    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId,
+                           @RequestParam ("userId") Integer userId)
     {
-        List<Folder> folders = folderService.getFoldersByParent (parentFolderId);
+        List<Folder> folders = folderService.getFoldersByParent (parentFolderId, userId);
         Result res = new Result ();
         res.setData (folders);
         res.setMessageAndCode ("获取该父文件夹下的文件夹列表成功", 1);
@@ -52,5 +53,15 @@ public class FolderController
     }
 
     //TODO delete
+    @PostMapping ("/delete")
+    @ResponseBody
+    @ApiOperation (notes = "", value = "删除文件夹（未完成）")
+    public Result delete (@RequestParam ("folderId") Integer folderId,
+                          @RequestParam ("userId") Integer userId)
+    {
+        Result res = new Result ();
+        res.setMessageAndCode ("你成功请求了这个接口，但这个接口的内容为还没有写", 1);
 
+        return res;
+    }
 }

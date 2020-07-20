@@ -8,6 +8,6 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<FileInfo, Integer>
 
 {
-    List<FileInfo>  findByFolderId (Integer parentFolderId);
+    List<FileInfo>  findByFolderIdAndUserId (Integer parentFolderId, Integer userId);
     FileInfo findByFileId (Integer fileId);
 }

@@ -64,16 +64,40 @@ public class FileController
 //
 
     //TODO Download file
+    @GetMapping ("/download")
+    @ResponseBody
+    @ApiOperation (notes = "", value = "下载文件（未完成）")
+    public Result download (@RequestParam ("fileId") Integer fileId,
+                            @RequestParam ("userId") Integer userId)
+    {
+        Result res = new Result ();
+        res.setMessageAndCode ("你成功请求了这个接口，但这个接口的内容为还没有写", 1);
+
+        return res;
+    }
+
 
     //TODO delete
+    @PostMapping ("/delete")
+    @ResponseBody
+    @ApiOperation (notes = "", value = "删除文件（未完成）")
+    public Result delete (@RequestParam ("fileId") Integer fileId,
+                            @RequestParam ("userId") Integer userId)
+    {
+        Result res = new Result ();
+        res.setMessageAndCode ("你成功请求了这个接口，但这个接口的内容为还没有写", 1);
+
+        return res;
+    }
 
 
     @GetMapping ("/getList")
     @ResponseBody
-    @ApiOperation (notes = "返回值补充说明：Data内容为若干个文件的信息（List<Folder>）", value = "获取文件夹内的文件")
-    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId)
+    @ApiOperation (notes = "最外层文件夹parentFolderId = 0。\n返回值补充说明：Data内容为若干个文件的信息（List<Folder>）", value = "获取文件夹内的文件")
+    public Result getList (@RequestParam ("parentFolderId") Integer parentFolderId,
+                           @RequestParam ("userId") Integer userId)
     {
-        List<FileInfo> fileInfos = fileService.getFileInfos (parentFolderId);
+        List<FileInfo> fileInfos = fileService.getFileInfos (parentFolderId, userId);
         Result res = new Result ();
         res.setData (fileInfos);
         res.setMessageAndCode ("获取该父文件夹下的文件列表成功", 1);

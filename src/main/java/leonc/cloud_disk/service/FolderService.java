@@ -30,8 +30,8 @@ public class FolderService
         return this.folderRepository.findByFolderId (folderId);
     }
 
-    public List<Folder> getFoldersByParent (Integer parentFolderId)
+    public List<Folder> getFoldersByParent (Integer parentFolderId, Integer userId)
     {
-        return this.folderRepository.findByParentFolderId (parentFolderId);
+        return this.folderRepository.findByParentFolderIdAndUserId (parentFolderId, userId);
     }
 }

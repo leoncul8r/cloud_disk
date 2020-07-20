@@ -31,10 +31,10 @@ public class SwaggerConfig {
     //基本信息，页面展示
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("测试项目标题")
-                .description("接口描述")
+                .title("CloudDisk by Leon")
+                .description("后端接口信息（标注未完成的接口只是功能还未实现，接口信息基本全面，并且可以接受请求）\nps.下列除\"basic-error-controller\"外都是后端创建的")
                 //版本号
-                .version("1.0.0-SNAPSHOT")
+                .version("test")
                 .build();
     }
 }

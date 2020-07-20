@@ -30,9 +30,9 @@ public class FileService
         fileRepository.save (fileInfo);
     }
 
-    public List<FileInfo> getFileInfos (Integer parentFolderId)
+    public List<FileInfo> getFileInfos (Integer parentFolderId, Integer userId)
     {
-        return this.fileRepository.findByFolderId (parentFolderId);
+        return this.fileRepository.findByFolderIdAndUserId (parentFolderId, userId);
     }
 
 
