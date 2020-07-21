@@ -34,4 +34,22 @@ public class FolderService
     {
         return this.folderRepository.findByParentFolderIdAndUserId (parentFolderId, userId);
     }
+
+    //删除文件夹
+    public Integer delete (Integer folderId, Integer userId)
+    {
+        try
+        {
+            Folder folder = this.getFolderById (folderId);
+            if (folder.getUserId ().equals (userId))
+            {
+                folderRepository.delete (folder);
+                return 1;
+            }
+        }catch (NullPointerException e)
+        {
+            return 0;
+        }
+            return 0;
+    }
 }

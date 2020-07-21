@@ -8,7 +8,6 @@ import java.io.FileWriter;
 
 public class RenameFile
 {
-    //TODO 现在上传中文会报错，无法改名
     public static void rename(String filePath, String newPath) {
         BufferedReader bufR = null;
         BufferedWriter bufW = null;

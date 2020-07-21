@@ -16,21 +16,15 @@ public class FileService
     @Autowired
     private FileRepository fileRepository;
 
-
     private static final Logger log = LoggerFactory.getLogger(FileService.class);
-
-    public void delete (FileInfo fileInfo)
-    {
-        fileRepository.delete (fileInfo);
-    }
-
 
     public void save (FileInfo fileInfo)
     {
         fileRepository.save (fileInfo);
     }
 
-    public List<FileInfo> getFileInfos (Integer parentFolderId, Integer userId)
+    //获取文件夹内的文件
+    public List<FileInfo> getFileList (Integer parentFolderId, Integer userId)
     {
         return this.fileRepository.findByFolderIdAndUserId (parentFolderId, userId);
     }
@@ -49,10 +43,39 @@ public class FileService
         return fileInfo.getFileId ();
     }
 
-    //删除信息
-    public void deleteFileInfoByName (Integer fileId)
+    //获取文件信息
+    public FileInfo getInfo (Integer fileId, Integer userId)
     {
-        fileRepository.delete (fileRepository.findByFileId (fileId));
+        try
+        {
+            FileInfo fileInfo = fileRepository.findByFileId (fileId);
+            if (fileInfo.getUserId ().equals (userId))
+            {
+                return fileInfo;
+            }
+        }catch (NullPointerException e)
+        {
+            return null;
+        }
+        return null;
+    }
+
+    //删除文件
+    public Integer delete (Integer fileId, Integer userId)
+    {
+        try
+        {
+            FileInfo fileInfo = fileRepository.findByFileId (fileId);
+            if (fileInfo.getUserId ().equals (userId))
+            {
+                fileRepository.delete (fileInfo);
+                return 1;
+            }
+        }catch (NullPointerException e)
+        {
+            return 0;
+        }
+        return 0;
     }
 
 }

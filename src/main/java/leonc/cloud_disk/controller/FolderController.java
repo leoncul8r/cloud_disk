@@ -52,15 +52,21 @@ public class FolderController
         return res;
     }
 
-    //TODO delete
     @PostMapping ("/delete")
     @ResponseBody
-    @ApiOperation (notes = "", value = "删除文件夹（未完成）")
+    @ApiOperation (notes = "建议前端在执行此操作时弹出警告，文件夹内的文件夹和文件都会被删除\n返回值补充说明：Data内容为空", value = "删除文件夹")
     public Result delete (@RequestParam ("folderId") Integer folderId,
                           @RequestParam ("userId") Integer userId)
     {
         Result res = new Result ();
-        res.setMessageAndCode ("你成功请求了这个接口，但这个接口的内容为还没有写", 1);
+        Integer i = folderService.delete (folderId, userId);
+        if (i == 1)
+        {
+            res.setMessageAndCode ("删除文件夹成功", 1);
+        }else
+        {
+            res.setMessageAndCode ("删除文件夹失败，请检查请求参数", 0);
+        }
 
         return res;
     }
