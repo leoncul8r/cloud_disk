@@ -74,7 +74,7 @@ public class FileController
     //TODO Download file
     @GetMapping ("/download")
     @ResponseBody
-    @ApiOperation (notes = "", value = "下载文件（未完成）")
+    @ApiOperation (notes = "", value = "下载文件")
     public Result download (@RequestParam ("fileId") Integer fileId,
                             @RequestParam ("userId") Integer userId) throws IOException
     {
