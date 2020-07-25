@@ -13,13 +13,18 @@ public class UserService
 
     public User create (String userName, String password)
     {
-        User user = new User ();
-        user.setUserName (userName);
-        user.setPassword (password);
+        if (getUserInfoByUserName (userName) == null)
+        {
+            User user = new User ();
+            user.setUserName (userName);
+            user.setPassword (password);
 
-        this.userRepository.save (user);
+            this.userRepository.save (user);
+            return user;
+        }
 
-        return user;
+        return null;
+
     }
 
     public User getUserInfoByUserName (String userName)

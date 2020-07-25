@@ -42,7 +42,9 @@ public class FileController
     @ApiOperation (notes = "返回值补充说明：Data内容为上传文件的id（fileId）", value = "上传文件")
     public Result upload(@RequestParam("file") MultipartFile file,
                          @RequestParam ("userId") Integer userId,
-                         @RequestParam ("folderId") Integer folderId)
+                         @RequestParam ("folderId") Integer folderId,
+                         @RequestParam ("type") String type)
+
     {
         Result res = new Result ();
         if (file.isEmpty()) {
@@ -55,9 +57,9 @@ public class FileController
         try {
             file.transferTo(dest);
             Integer fileId;
-            fileId = fileService.save(folderId, fileName, userId);
+            fileId = fileService.save(folderId, fileName, userId, type);
             RenameFile.rename (filePath + fileName, filePath + fileId);
-            log.info("上传成功");
+            log.info("上传" + fileId +"号文件成功");
             res.setData (fileId);
             res.setMessageAndCode ("上传成功", 1);
             return res;
@@ -65,6 +67,8 @@ public class FileController
             log.error(e.toString(), e);
         }
         res.setMessageAndCode ("上传失败", 0);
+        log.info("上传失败");
+
         return res;
     }
 
@@ -82,7 +86,8 @@ public class FileController
         FileInfo fileInfo = fileService.getInfo (fileId, userId);
         if (fileInfo == null)
         {
-            res.setMessageAndCode ("下载失败，请检查请求参数", 0);
+            res.setMessageAndCode ("下载" + fileId +"号文件失败，请检查请求参数", 0);
+            log.info("下载" + fileId +"号文件失败");
         }
         else
         {
@@ -97,7 +102,8 @@ public class FileController
             DownloadUtil.download (filePath + fileName, response);
 
 
-            res.setMessageAndCode ("你成功请求了这个接口，但这个接口的内容为还没有写", 1);
+            res.setMessageAndCode ("下载" + fileId +"号文件成功", 1);
+            log.info("下载" + fileId +"号文件成功");
         }
         return res;
     }
@@ -114,9 +120,11 @@ public class FileController
         if (i == 1)
         {
             res.setMessageAndCode ("删除文件成功", 1);
+            log.info("删除" + fileId +"号文件成功");
         }else
         {
             res.setMessageAndCode ("删除文件失败，请检查请求参数", 0);
+            log.info("删除" + fileId +"号文件失败");
         }
         return res;
     }
@@ -133,6 +141,7 @@ public class FileController
         Result res = new Result ();
         res.setData (fileInfos);
         res.setMessageAndCode ("获取该父文件夹下的文件列表成功", 1);
+        log.info("请求" + parentFolderId +"号文件夹内的文件列表成功");
 
         return res;
     }

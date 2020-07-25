@@ -31,12 +31,13 @@ public class FileService
 
 
     //写入文件基本数据
-    public Integer save(Integer folderId, String fileName, Integer userId) throws  IOException
+    public Integer save(Integer folderId, String fileName, Integer userId, String type) throws  IOException
     {
         FileInfo fileInfo = new FileInfo ();
         fileInfo.setFolderId (folderId);
         fileInfo.setFileName (fileName);
         fileInfo.setUserId (userId);
+        fileInfo.setType (type);
 
         this.fileRepository.save (fileInfo);
 

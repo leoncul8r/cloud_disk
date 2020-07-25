@@ -24,12 +24,22 @@ public class UserController
     public Result register (@RequestParam ("userName") String userName,
                             @RequestParam ("password") String password)
     {
-        Integer userId;
-        userId = userService.create (userName, password).getId ();
-
         Result res = new Result ();
-        res.setData (userId);
-        res.setMessageAndCode ("注册成功", 1);
+
+
+            Integer userId;
+            try
+            {
+                userId = userService.create (userName, password).getId ();
+
+                res.setData (userId);
+                res.setMessageAndCode ("注册成功", 1);
+                log.info ("注册成功");
+            }catch (NullPointerException e)
+            {
+                res.setMessageAndCode ("注册失败，可能是使用了重复的用户名", 0);
+                log.info ("注册失败，可能是使用了重复的用户名");
+            }
 
         return res;
     }
@@ -48,11 +58,13 @@ public class UserController
         if (! password.equals (user.getPassword ()))
         {
             res.setMessageAndCode ("用户名或密码错误，登录失败", 0);
+            log.info ("登录失败");
         }
         else
         {
             res.setData (user.getId ());
             res.setMessageAndCode ("登录成功，返回用户id", 1);
+            log.info ("登录成功");
         }
 
         return res;

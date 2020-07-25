@@ -14,6 +14,7 @@ public class FileInfo
     private Integer userId;
     private Integer folderId;
     private String fileName;
+    private String type;
     private double fileSize;
 
 
@@ -55,6 +56,16 @@ public class FileInfo
     public void setFileName (String fileName)
     {
         this.fileName = fileName;
+    }
+
+    public String getType ()
+    {
+        return type;
+    }
+
+    public void setType (String type)
+    {
+        this.type = type;
     }
 
     public double getFileSize ()
