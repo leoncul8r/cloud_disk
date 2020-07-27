@@ -15,7 +15,7 @@ public class FileInfo
     private Integer folderId;
     private String fileName;
     private String type;
-    private double fileSize;
+    private String fileSize;
 
 
     public Integer getFileId ()
@@ -68,12 +68,12 @@ public class FileInfo
         this.type = type;
     }
 
-    public double getFileSize ()
+    public String getFileSize ()
     {
         return fileSize;
     }
 
-    public void setFileSize (double fileSize)
+    public void setFileSize (String fileSize)
     {
         this.fileSize = fileSize;
     }

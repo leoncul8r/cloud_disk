@@ -33,7 +33,7 @@ public class FolderController
         Folder folder = folderService.getFolderById (folderId);
         Result res = new Result ();
         res.setData (folder);
-        res.setMessageAndCode ("新建文件夹成功", 1);
+        res.setMessageAndCode ("新建文件夹成功", 0);
         log.info("新建" + folderId +"号文件夹成功");
 
         return res;
@@ -48,7 +48,7 @@ public class FolderController
         List<Folder> folders = folderService.getFoldersByParent (parentFolderId, userId);
         Result res = new Result ();
         res.setData (folders);
-        res.setMessageAndCode ("获取该父文件夹下的文件夹列表成功", 1);
+        res.setMessageAndCode ("获取该父文件夹下的文件夹列表成功", 0);
         log.info("获取" + parentFolderId +"号文件夹内的文件夹列表成功");
 
         return res;
@@ -64,11 +64,11 @@ public class FolderController
         Integer i = folderService.delete (folderId, userId);
         if (i == 1)
         {
-            res.setMessageAndCode ("删除文件夹成功", 1);
+            res.setMessageAndCode ("删除文件夹成功", 0);
             log.info("删除" + folderId +"号文件夹成功");
         }else
         {
-            res.setMessageAndCode ("删除文件夹失败，请检查请求参数", 0);
+            res.setMessageAndCode ("删除文件夹失败，请检查请求参数", 11);
             log.info("删除" + folderId +"号文件夹失败");
         }
 

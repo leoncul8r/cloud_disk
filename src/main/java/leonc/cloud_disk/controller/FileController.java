@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @EnableAsync
@@ -48,32 +49,63 @@ public class FileController
     {
         Result res = new Result ();
         if (file.isEmpty()) {
-            res.setMessageAndCode ("上传失败，请选择文件", 0);
+            res.setMessageAndCode ("上传失败，请选择文件", 11);
             return res;
         }
         String fileName = file.getOriginalFilename();
+
+        //文件大小
+        double size = file.getSize();
+        String fileSize = "";
+        if (size < 1024)
+        {
+            fileSize = size + "字节";
+        }else if (size < 1024 * 1024)
+        {
+            fileSize = String.format("%.2f", (size / 1024)) + "KB";
+        }else if (size < 1024 * 1024 * 1024)
+        {
+            fileSize = String.format("%.2f", (size / 1024 / 1024)) + "MB";
+        }else if (size / (1024 * 1024) <  1024 * 1024)
+        {
+            fileSize = String.format("%.2f", (size / 1024 / 1024/ 1024)) + "GB";
+        }
+
+        //文件类型判定是否合规
+        AtomicBoolean typeIsIllegal = new AtomicBoolean (true);
+        for (fileTypes e : fileTypes.values())
+        {
+            if (type.equals (e.toString ()))
+            {
+                typeIsIllegal.set (false);
+                break;
+            }
+        }
+        if (typeIsIllegal.get ())
+        {
+            res.setMessageAndCode ("上传失败，文件类型不合规", 11);
+            log.info("上传失败，文件类型不合规");
+            return res;
+        }
 
         File dest = new File(filePath + fileName);
         try {
             file.transferTo(dest);
             Integer fileId;
-            fileId = fileService.save(folderId, fileName, userId, type);
+            fileId = fileService.save(folderId, fileName, userId, type, fileSize);
             RenameFile.rename (filePath + fileName, filePath + fileId);
             log.info("上传" + fileId +"号文件成功");
             res.setData (fileId);
-            res.setMessageAndCode ("上传成功", 1);
+            res.setMessageAndCode ("上传成功", 0);
             return res;
         } catch (IOException e) {
             log.error(e.toString(), e);
         }
-        res.setMessageAndCode ("上传失败", 0);
+        res.setMessageAndCode ("上传失败", 10);
         log.info("上传失败");
 
         return res;
     }
-
-
-//
 
     //TODO Download file
     @GetMapping ("/download")
@@ -86,7 +118,7 @@ public class FileController
         FileInfo fileInfo = fileService.getInfo (fileId, userId);
         if (fileInfo == null)
         {
-            res.setMessageAndCode ("下载" + fileId +"号文件失败，请检查请求参数", 0);
+            res.setMessageAndCode ("下载" + fileId +"号文件失败，请检查请求参数", 11);
             log.info("下载" + fileId +"号文件失败");
         }
         else
@@ -102,12 +134,14 @@ public class FileController
             DownloadUtil.download (filePath + fileName, response);
 
 
-            res.setMessageAndCode ("下载" + fileId +"号文件成功", 1);
+            res.setMessageAndCode ("下载" + fileId +"号文件成功", 0);
             log.info("下载" + fileId +"号文件成功");
         }
         return res;
     }
 
+
+//
 
     @PostMapping ("/delete")
     @ResponseBody
@@ -119,16 +153,15 @@ public class FileController
         Integer i = fileService.delete (fileId, userId);
         if (i == 1)
         {
-            res.setMessageAndCode ("删除文件成功", 1);
+            res.setMessageAndCode ("删除文件成功", 0);
             log.info("删除" + fileId +"号文件成功");
         }else
         {
-            res.setMessageAndCode ("删除文件失败，请检查请求参数", 0);
+            res.setMessageAndCode ("删除文件失败，请检查请求参数", 10);
             log.info("删除" + fileId +"号文件失败");
         }
         return res;
     }
-
 
     @GetMapping ("/getList")
     @ResponseBody
@@ -140,10 +173,15 @@ public class FileController
         List<FileInfo> fileInfos = fileService.getFileList (parentFolderId, userId);
         Result res = new Result ();
         res.setData (fileInfos);
-        res.setMessageAndCode ("获取该父文件夹下的文件列表成功", 1);
+        res.setMessageAndCode ("获取该父文件夹下的文件列表成功", 0);
         log.info("请求" + parentFolderId +"号文件夹内的文件列表成功");
 
         return res;
+    }
+
+
+    private enum fileTypes {
+        isVideo, isAudio, isImage, isDocument, isOthers
     }
 
 

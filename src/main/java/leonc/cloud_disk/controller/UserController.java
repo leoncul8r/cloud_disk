@@ -33,11 +33,11 @@ public class UserController
                 userId = userService.create (userName, password).getId ();
 
                 res.setData (userId);
-                res.setMessageAndCode ("注册成功", 1);
+                res.setMessageAndCode ("注册成功", 0);
                 log.info ("注册成功，用户名：" + userName + "，用户id：" + userId);
             }catch (NullPointerException e)
             {
-                res.setMessageAndCode ("注册失败，可能是使用了重复的用户名", 0);
+                res.setMessageAndCode ("注册失败，可能是使用了重复的用户名", 11);
                 log.info ("注册失败，可能是使用了重复的用户名");
             }
 
@@ -61,7 +61,7 @@ public class UserController
         }
         catch (NullPointerException e)
         {
-            res.setMessageAndCode ("用户名不存在，登录失败", 9);
+            res.setMessageAndCode ("用户名不存在，登录失败", 11);
             log.info ("用户：" + userName + "的用户名不存在，登录失败");
             return res;
         }
@@ -69,14 +69,14 @@ public class UserController
         //验证密码
         if (! password.equals (passwordInDB) )
         {
-            res.setMessageAndCode ("密码错误，登录失败", 8);
+            res.setMessageAndCode ("密码错误，登录失败", 12);
             log.info ("用户：" + userName + "的密码错误，登录失败");
         }
         else
         {
             Integer userId = user.getId ();
             res.setData (userId);
-            res.setMessageAndCode ("登录成功，返回用户id", 1);
+            res.setMessageAndCode ("登录成功，返回用户id", 0);
             log.info ("登录成功，用户名：" + userName + "，用户id：" + userId);
         }
 
