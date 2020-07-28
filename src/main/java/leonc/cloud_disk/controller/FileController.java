@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import leonc.cloud_disk.entity.FileInfo;
 import leonc.cloud_disk.service.FileService;
 import leonc.cloud_disk.utils.DownloadUtil;
+import leonc.cloud_disk.utils.FileSizeCalculator;
 import leonc.cloud_disk.utils.RenameFile;
 import leonc.cloud_disk.utils.Result;
 import org.slf4j.Logger;
@@ -55,21 +56,8 @@ public class FileController
         String fileName = file.getOriginalFilename();
 
         //文件大小
-        double size = file.getSize();
-        String fileSize = "";
-        if (size < 1024)
-        {
-            fileSize = size + "字节";
-        }else if (size < 1024 * 1024)
-        {
-            fileSize = String.format("%.2f", (size / 1024)) + "KB";
-        }else if (size < 1024 * 1024 * 1024)
-        {
-            fileSize = String.format("%.2f", (size / 1024 / 1024)) + "MB";
-        }else if (size / (1024 * 1024) <  1024 * 1024)
-        {
-            fileSize = String.format("%.2f", (size / 1024 / 1024/ 1024)) + "GB";
-        }
+        double fileByte = file.getSize();
+        String fileSize = FileSizeCalculator.calculator (fileByte);
 
         //文件类型判定是否合规
         AtomicBoolean typeIsIllegal = new AtomicBoolean (true);
@@ -81,13 +69,14 @@ public class FileController
                 break;
             }
         }
-        if (typeIsIllegal.get ())
+        if (typeIsIllegal.get ())                  //如果类型不是预设对几个值
         {
             res.setMessageAndCode ("上传失败，文件类型不合规", 11);
             log.info("上传失败，文件类型不合规");
             return res;
         }
 
+        //保存文件，并写数据库
         File dest = new File(filePath + fileName);
         try {
             file.transferTo(dest);
@@ -107,10 +96,10 @@ public class FileController
         return res;
     }
 
-    //TODO Download file
+    //下载文件
     @GetMapping ("/download")
     @ResponseBody
-    @ApiOperation (notes = "", value = "下载文件")
+    @ApiOperation (value = "下载文件")
     public Result download (@RequestParam ("fileId") Integer fileId,
                             @RequestParam ("userId") Integer userId) throws IOException
     {
@@ -120,6 +109,7 @@ public class FileController
         {
             res.setMessageAndCode ("下载" + fileId +"号文件失败，请检查请求参数", 11);
             log.info("下载" + fileId +"号文件失败");
+            return res;
         }
         else
         {
@@ -133,16 +123,13 @@ public class FileController
             response.setHeader ("Content-Disposition", "attachment;filename=" + header);
             DownloadUtil.download (filePath + fileName, response);
 
-
-            res.setMessageAndCode ("下载" + fileId +"号文件成功", 0);
             log.info("下载" + fileId +"号文件成功");
+
+            return null;
         }
-        return res;
     }
 
-
-//
-
+    //
     @PostMapping ("/delete")
     @ResponseBody
     @ApiOperation (notes = "返回值补充说明：Data内容为空", value = "删除文件")
@@ -163,6 +150,21 @@ public class FileController
         return res;
     }
 
+    @GetMapping ("/filesByType")
+    @ResponseBody
+    @ApiOperation (notes = "返回值补充说明：Data内容为若干个文件的信息（List<Folder>）", value = "获取某个类型的文件")
+    public Result filesByType (@RequestParam ("type") String type,
+                               @RequestParam ("userId") Integer userId)
+    {
+        List<FileInfo> fileInfos = fileService.getFilesByType (type, userId);
+        Result res = new Result ();
+        res.setData (fileInfos);
+        res.setMessageAndCode ("获取该类型的文件成功", 0);
+        log.info("请求所有" + type +"类型的文件成功");
+
+        return res;
+    }
+
     @GetMapping ("/getList")
     @ResponseBody
     @ApiOperation (notes = "最外层文件夹parentFolderId = 0。\n" +
@@ -179,18 +181,19 @@ public class FileController
         return res;
     }
 
-
     private enum fileTypes {
         isVideo, isAudio, isImage, isDocument, isOthers
     }
+    
 
 
 //    @ResponseBody
-//    @RequestMapping ("/test")
-//    public Result test()
+//    @GetMapping ("/userIdTest")
+//    public Result test(@RequestParam ("userId") String userId)
 //    {
 //        Result res = new Result ();
-//        res.setMessageAndCode ("test successfully", 1);
+//        res.setMessageAndCode ("Data内容为userId", 0);
+//        res.setData (userId);
 //        return res;
 //    }
 

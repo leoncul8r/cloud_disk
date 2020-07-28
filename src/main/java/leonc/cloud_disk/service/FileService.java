@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -23,15 +22,8 @@ public class FileService
         fileRepository.save (fileInfo);
     }
 
-    //获取文件夹内的文件
-    public List<FileInfo> getFileList (Integer parentFolderId, Integer userId)
-    {
-        return this.fileRepository.findByFolderIdAndUserId (parentFolderId, userId);
-    }
-
-
     //写入文件基本数据
-    public Integer save(Integer folderId, String fileName, Integer userId, String type, String size) throws  IOException
+    public Integer save(Integer folderId, String fileName, Integer userId, String type, String size)
     {
         FileInfo fileInfo = new FileInfo ();
         fileInfo.setFolderId (folderId);
@@ -78,6 +70,20 @@ public class FileService
             return 0;
         }
         return 0;
+    }
+
+
+
+    //获取文件夹内的文件
+    public List<FileInfo> getFileList (Integer parentFolderId, Integer userId)
+    {
+        return this.fileRepository.findByFolderIdAndUserId (parentFolderId, userId);
+    }
+
+    //获取某一类型对文件
+    public List<FileInfo> getFilesByType (String type, Integer userId)
+    {
+        return this.fileRepository.findByTypeAndUserId (type, userId);
     }
 
 }
